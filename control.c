@@ -52,7 +52,6 @@ int main(int argc, char *argv[]){
     buff[0] = '\0';
     read(out, buff, SEG_SIZE);
     printf("The story so far:\n");
-    buff[0] = '\0';
     read(out, buff, SEG_SIZE);
     if (strlen(buff)) {
       *(strrchr(buff, '\n') + 1) = '\0';
