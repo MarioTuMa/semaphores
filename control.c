@@ -10,13 +10,13 @@
 #include "consts.h"
 
 
-// union semun {
-//   int              val;    /* Value for SETVAL */
-//   struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
-//   unsigned short  *array;  /* Array for GETALL, SETALL */
-//   struct seminfo  *__buf;  /* Buffer for IPC_INFO
-//                               (Linux-specific) */
-//};
+union semun {
+  int              val;    /* Value for SETVAL */
+  struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
+  unsigned short  *array;  /* Array for GETALL, SETALL */
+  struct seminfo  *__buf;  /* Buffer for IPC_INFO
+                              (Linux-specific) */
+};
 int main(int argc, char *argv[]){
   if(argc!=2){
     printf("incorrect format \n");
@@ -49,8 +49,14 @@ int main(int argc, char *argv[]){
     shmd = shmget(KEY, sizeof(char *), 0);
     out = open(OUT, O_RDONLY);
     char buff[SEG_SIZE];
+    buff[0] = '\0';
     read(out, buff, SEG_SIZE);
     printf("The story so far:\n");
+    buff[0] = '\0';
+    read(out, buff, SEG_SIZE);
+    if (strlen(buff)) {
+      *(strrchr(buff, '\n') + 1) = '\0';
+    }
     printf("%s\n", buff);
     close(out);
     shmctl(shmd, IPC_RMID, 0);
@@ -65,8 +71,13 @@ int main(int argc, char *argv[]){
   if(!strcmp(argv[1],"-v")){
     out = open(OUT, O_RDONLY);
     char buff[SEG_SIZE];
+    buff[0] = '\0';
     read(out, buff, SEG_SIZE);
     printf("The story so far:\n");
+    read(out, buff, SEG_SIZE);
+    if (strlen(buff)) {
+      *(strrchr(buff, '\n') + 1) = '\0';
+    }
     printf("%s\n", buff);
     close(out);
     return 0;
